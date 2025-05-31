@@ -1,0 +1,253 @@
+{
+  "info": {
+    "name": "Book Review API",
+    "description": "Collection for testing the Book Review REST API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:5000"
+    },
+    {
+      "key": "token",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "Register User",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"username\": \"testuser\", \"password\": \"password123\", \"email\": \"test@example.com\"}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/register",
+              "host": ["{{baseUrl}}"],
+              "path": ["register"]
+            }
+          }
+        },
+        {
+          "name": "Login (JWT)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"username\": \"testuser\", \"password\": \"password123\"}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["login"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const responseJson = pm.response.json();",
+                  "    pm.collectionVariables.set('token', responseJson.token);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Session Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"username\": \"testuser\", \"password\": \"password123\"}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/session/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["session", "login"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Books",
+      "item": [
+        {
+          "name": "Get All Books",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/books",
+              "host": ["{{baseUrl}}"],
+              "path": ["books"]
+            }
+          }
+        },
+        {
+          "name": "Get Book by ISBN",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/books/isbn/978-0-7432-7356-5",
+              "host": ["{{baseUrl}}"],
+              "path": ["books", "isbn", "978-0-7432-7356-5"]
+            }
+          }
+        },
+        {
+          "name": "Get Books by Author",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/books/author/George Orwell",
+              "host": ["{{baseUrl}}"],
+              "path": ["books", "author", "George Orwell"]
+            }
+          }
+        },
+        {
+          "name": "Get Books by Title",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/books/title/1984",
+              "host": ["{{baseUrl}}"],
+              "path": ["books", "title", "1984"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Reviews",
+      "item": [
+        {
+          "name": "Get Book Reviews",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/books/1/reviews",
+              "host": ["{{baseUrl}}"],
+              "path": ["books", "1", "reviews"]
+            }
+          }
+        },
+        {
+          "name": "Add Review (JWT Auth)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"rating\": 5, \"comment\": \"Excellent book! Highly recommended.\"}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/books/1/reviews",
+              "host": ["{{baseUrl}}"],
+              "path": ["books", "1", "reviews"]
+            }
+          }
+        },
+        {
+          "name": "Update Review (JWT Auth)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"rating\": 4, \"comment\": \"Updated review: Very good book!\"}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/books/1/reviews/REVIEW_ID_HERE",
+              "host": ["{{baseUrl}}"],
+              "path": ["books", "1", "reviews", "REVIEW_ID_HERE"]
+            }
+          }
+        },
+        {
+          "name": "Delete Review (Session Auth)",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{baseUrl}}/books/1/reviews/REVIEW_ID_HERE",
+              "host": ["{{baseUrl}}"],
+              "path": ["books", "1", "reviews", "REVIEW_ID_HERE"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Utility",
+      "item": [
+        {
+          "name": "Health Check",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/health",
+              "host": ["{{baseUrl}}"],
+              "path": ["health"]
+            }
+          }
+        },
+        {
+          "name": "Session Logout",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{baseUrl}}/session/logout",
+              "host": ["{{baseUrl}}"],
+              "path": ["session", "logout"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
